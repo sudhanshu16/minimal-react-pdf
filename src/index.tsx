@@ -1,5 +1,6 @@
-import React, { FC, HTMLAttributes, useEffect, useRef } from 'react';
+import React, { HTMLAttributes } from 'react';
 import pdfjs from '@bundled-es-modules/pdfjs-dist';
+pdfjs.GlobalWorkerOptions.workerSrc = `//cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjs.version}/pdf.worker.min.js`
 
 export interface Props extends HTMLAttributes<HTMLDivElement> {
   file: string;
@@ -8,17 +9,17 @@ export interface Props extends HTMLAttributes<HTMLDivElement> {
 
 // Please do not use types off of a default export module or else Storybook Docs will suffer.
 // see: https://github.com/storybookjs/storybook/issues/9556
-const MinimalReactPdf: FC<Props> = ({ file, onLoad, ...extraProps }) => {
-  const documentRef = useRef<HTMLDivElement>(null);
+export default class MinimalReactPdf extends React.Component<Props> {
+  documentRef = React.createRef<HTMLDivElement>()
 
-  const loadDocument = async () => {
-    if (documentRef.current === null) return;
+  async loadDocument() {
+    if (this.documentRef.current === null) return;
 
-    const pdfDocument = await pdfjs.getDocument(file).promise;
+    const pdfDocument = await pdfjs.getDocument(this.props.file).promise;
 
     for (let i = pdfDocument.numPages, j = 1; i > 0; i--, j++) {
       const page = await pdfDocument.getPage(j);
-      const boxWidth = documentRef.current.clientWidth;
+      const boxWidth = this.documentRef.current.clientWidth;
       const pageWidth = page.getViewport({
         scale: 1,
       }).width;
@@ -32,7 +33,7 @@ const MinimalReactPdf: FC<Props> = ({ file, onLoad, ...extraProps }) => {
       canvas.width = scaledViewport.width;
       canvas.height = scaledViewport.height;
 
-      documentRef.current.appendChild(canvas);
+      this.documentRef.current.appendChild(canvas);
 
       const ctx = canvas.getContext('2d');
 
@@ -43,27 +44,31 @@ const MinimalReactPdf: FC<Props> = ({ file, onLoad, ...extraProps }) => {
         viewport: scaledViewport,
       });
 
-      if (i === 1) onLoad && onLoad();
+      if (i === 1) this.props.onLoad && this.props.onLoad();
     }
-  };
+  }
 
-  useEffect(() => {
-    loadDocument();
-  }, [file, loadDocument]);
+  componentDidMount() {
+    this.loadDocument()
+  }
 
-  return (
-    <div
-      ref={documentRef}
-      style={{
-        width: '100%',
-        height: '100%',
-        overflowX: 'hidden',
-        overflowY: 'auto',
-        padding: 0,
-      }}
-      {...extraProps}
-    />
-  );
-};
+  componentDidUpdate() {
+    this.loadDocument()
+  }
 
-export default MinimalReactPdf;
+  render() {
+    return (
+      <div
+        ref={this.documentRef}
+        style={{
+          width: '100%',
+          height: '100%',
+          overflowX: 'hidden',
+          overflowY: 'auto',
+          padding: 0,
+        }}
+        {...this.props}
+      />
+    );
+  }
+}

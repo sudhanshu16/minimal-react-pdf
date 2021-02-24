@@ -12,6 +12,10 @@ export interface Props extends HTMLAttributes<HTMLDivElement> {
 export default class MinimalReactPdf extends React.Component<Props> {
   documentRef = React.createRef<HTMLDivElement>()
 
+  constructor(props: Props) {
+    super(props)
+  }
+
   async loadDocument() {
     if (this.documentRef.current === null) return;
 

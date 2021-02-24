@@ -1,15 +1,15 @@
-import React, { HTMLAttributes } from 'react';
+import * as React from 'react';
 import pdfjs from '@bundled-es-modules/pdfjs-dist';
 pdfjs.GlobalWorkerOptions.workerSrc = `//cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjs.version}/pdf.worker.min.js`
 
-export interface Props extends HTMLAttributes<HTMLDivElement> {
+export interface Props extends React.HTMLProps<HTMLDivElement> {
   file: string;
   onLoad: () => void;
 }
 
 // Please do not use types off of a default export module or else Storybook Docs will suffer.
 // see: https://github.com/storybookjs/storybook/issues/9556
-export default class MinimalReactPdf extends React.Component<Props> {
+class MinimalReactPdf extends React.Component<Props, any> {
   documentRef = React.createRef<HTMLDivElement>()
 
   constructor(props: Props) {
@@ -67,8 +67,6 @@ export default class MinimalReactPdf extends React.Component<Props> {
         style={{
           width: '100%',
           height: '100%',
-          overflowX: 'hidden',
-          overflowY: 'auto',
           padding: 0,
         }}
         {...this.props}
@@ -76,3 +74,5 @@ export default class MinimalReactPdf extends React.Component<Props> {
     );
   }
 }
+
+export default MinimalReactPdf

@@ -11,10 +11,6 @@ export interface Props extends HTMLAttributes<HTMLDivElement> {
 const MinimalReactPdf: FC<Props> = ({ file, onLoad, ...extraProps }) => {
   const documentRef = useRef<HTMLDivElement>(null);
 
-  useEffect(() => {
-    loadDocument();
-  }, [file]);
-
   const loadDocument = async () => {
     if (documentRef.current === null) return;
 
@@ -51,6 +47,10 @@ const MinimalReactPdf: FC<Props> = ({ file, onLoad, ...extraProps }) => {
     }
   };
 
+  useEffect(() => {
+    loadDocument();
+  }, [file, loadDocument]);
+
   return (
     <div
       ref={documentRef}
@@ -66,4 +66,4 @@ const MinimalReactPdf: FC<Props> = ({ file, onLoad, ...extraProps }) => {
   );
 };
 
-export default MinimalReactPdf
+export default MinimalReactPdf;

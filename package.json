@@ -72,5 +72,9 @@
   },
   "dependencies": {
     "@bundled-es-modules/pdfjs-dist": "^2.5.207-rc1"
-  }
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/sudhanshu16/minimal-react-pdf"
+  },
 }
